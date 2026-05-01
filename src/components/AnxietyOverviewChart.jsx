@@ -5,8 +5,8 @@ import {
 } from 'recharts';
 
 const chartData = [
-  ...anxietyDimensions.map(d => ({ name: d.shortLabel, wm: d.wm, interpretation: d.interpretation, type: 'anxiety', tableKey: d.tableKey })),
-  ...predictorVariables.map(d => ({ name: d.shortLabel, wm: d.wm, interpretation: d.interpretation, type: 'predictor', tableKey: d.tableKey })),
+  ...anxietyDimensions.map(d => ({ name: d.label, wm: d.wm, interpretation: d.interpretation, type: 'anxiety', tableKey: d.tableKey })),
+  ...predictorVariables.map(d => ({ name: d.label, wm: d.wm, interpretation: d.interpretation, type: 'predictor', tableKey: d.tableKey })),
 ];
 
 function getBarColor(entry) {
@@ -15,6 +15,22 @@ function getBarColor(entry) {
   }
   return entry.interpretation === 'Agree' ? 'var(--agree)' : 'var(--disagree)';
 }
+
+const CustomYAxisTick = ({ x, y, payload }) => {
+  return (
+    <foreignObject x={x - 140} y={y - 18} width={130} height={36}>
+      <div xmlns="http://www.w3.org/1999/xhtml" style={{ 
+        width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+        textAlign: 'right', fontSize: '11px', color: 'var(--text-secondary)', 
+        fontFamily: 'var(--font-body)', lineHeight: 1.3, wordWrap: 'break-word', paddingRight: '4px'
+      }}>
+        {payload.value}
+      </div>
+    </foreignObject>
+  );
+};
+
+
 
 function CustomTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
@@ -43,12 +59,10 @@ export default function AnxietyOverviewChart({ showRefLines, onBarClick }) {
   };
 
   return (
-    <div className="card" style={{ flex: 1 }}>
+    <div className="card" style={{ flex: 2 }}>
       <div className="card-header">
         <div>
-          <div className="card-title">Anxiety Dimensions & Predictor Variables — Overview</div>
-          <div className="card-subtitle">Weighted means on a 4-point Likert scale (n = 237)</div>
-          <div className="chart-clickable-hint">🖱 Click any bar to view raw indicator data</div>
+          <div className="card-title">Which Type of Anxiety is the Highest?</div>
         </div>
         <div className="legend">
           <span className="legend-item"><span className="legend-dot" style={{ background: 'var(--high)' }} />High</span>
@@ -57,21 +71,21 @@ export default function AnxietyOverviewChart({ showRefLines, onBarClick }) {
           <span className="legend-item"><span className="legend-dot" style={{ background: 'var(--disagree)' }} />Disagree</span>
         </div>
       </div>
-      <div className="chart-wrap" style={{ height: 220 }}>
+      <div className="chart-wrap" style={{ minHeight: 340 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 40, left: 10, bottom: 0 }}
-            barCategoryGap="20%" onClick={handleClick} style={{ cursor: 'pointer' }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#2a2d3e" horizontal={false} />
-            <XAxis type="number" domain={[0, 4]} tickCount={9} tick={{ fill: '#9da3b4', fontSize: 10 }} tickFormatter={v => v.toFixed(2)} />
-            <YAxis type="category" dataKey="name" width={105} tick={{ fill: '#9da3b4', fontSize: 10 }} />
-            <Tooltip content={<CustomTooltip />} />
+            barCategoryGap="15%" onClick={handleClick} style={{ cursor: 'pointer' }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+            <XAxis type="number" domain={[0, 4]} tickCount={9} tick={{ fill: 'var(--text-muted)', fontSize: 10 }} tickFormatter={v => v.toFixed(2)} />
+            <YAxis type="category" dataKey="name" width={140} tick={<CustomYAxisTick />} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--surface-2)' }} />
             {showRefLines && <>
-              <ReferenceLine x={1.75} stroke="#4b5563" strokeDasharray="4 2" label={{ value: 'Mod.', position: 'top', fill: '#6b7280', fontSize: 9 }} />
-              <ReferenceLine x={2.50} stroke="#6366f1" strokeDasharray="4 2" label={{ value: 'High/Agree', position: 'top', fill: '#8b5cf6', fontSize: 9 }} />
-              <ReferenceLine x={3.35} stroke="#ef4444" strokeDasharray="4 2" label={{ value: 'V.High', position: 'top', fill: '#ef4444', fontSize: 9 }} />
+              <ReferenceLine x={1.75} stroke="var(--text-muted)" strokeDasharray="4 2" label={{ value: 'Mod.', position: 'top', fill: 'var(--text-muted)', fontSize: 9 }} />
+              <ReferenceLine x={2.50} stroke="var(--accent)" strokeDasharray="4 2" label={{ value: 'High/Agree', position: 'top', fill: 'var(--accent)', fontSize: 9 }} />
+              <ReferenceLine x={3.35} stroke="var(--high)" strokeDasharray="4 2" label={{ value: 'V.High', position: 'top', fill: 'var(--high)', fontSize: 9 }} />
             </>}
-            <Bar dataKey="wm" radius={[0, 4, 4, 0]} maxBarSize={18}
-              label={{ position: 'right', fill: '#9da3b4', fontSize: 10, formatter: v => v.toFixed(2) }}>
+            <Bar dataKey="wm" radius={[0, 8, 8, 0]} maxBarSize={32}
+              label={{ position: 'right', fill: 'var(--text-primary)', fontSize: 11, fontWeight: 600, formatter: v => v.toFixed(2) }}>
               {chartData.map((entry, i) => (
                 <Cell key={i} fill={getBarColor(entry)} fillOpacity={0.9} />
               ))}

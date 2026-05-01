@@ -1,10 +1,27 @@
+import { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
 export default function SummaryModal({ onClose }) {
+  const overlayRef = useRef();
+  const boxRef = useRef();
+
+  const { contextSafe } = useGSAP(() => {
+    gsap.from(overlayRef.current, { opacity: 0, duration: 0.4, ease: 'power2.out' });
+    gsap.from(boxRef.current, { y: 30, scale: 0.95, opacity: 0, duration: 0.5, ease: 'back.out(1.5)' });
+  });
+
+  const handleClose = contextSafe(() => {
+    gsap.to(overlayRef.current, { opacity: 0, duration: 0.3 });
+    gsap.to(boxRef.current, { y: 20, scale: 0.95, opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: onClose });
+  });
+
   return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal-box">
+    <div className="modal-overlay" ref={overlayRef} onClick={e => e.target === e.currentTarget && handleClose()}>
+      <div className="modal-box" ref={boxRef}>
         <div className="modal-header">
           <span className="modal-title">Research Summary</span>
-          <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
+          <button className="modal-close" onClick={handleClose} aria-label="Close">✕</button>
         </div>
         <div className="modal-body">
 

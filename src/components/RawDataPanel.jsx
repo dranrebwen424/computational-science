@@ -1,4 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 const BADGE = {
   High: 'badge-high', Moderate: 'badge-moderate',
@@ -26,12 +28,49 @@ function MiniBar({ wm, interp }) {
 }
 
 export default function RawDataPanel({ table, onClose }) {
+  const panelRef = useRef();
+  
   // Close on Escape key
   useEffect(() => {
-    const handler = e => { if (e.key === 'Escape') onClose(); };
+    const handler = e => { if (e.key === 'Escape') handleClose(); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [onClose]);
+  }, []);
+
+  const { contextSafe } = useGSAP(() => {
+    // Entrance animations
+    gsap.from(panelRef.current, {
+      x: '100%',
+      duration: 0.6,
+      ease: 'power4.out'
+    });
+    
+    gsap.from('.panel-backdrop', {
+      opacity: 0,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+    
+    gsap.from('.raw-indicator-row', {
+      y: 20,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.05,
+      ease: 'power2.out',
+      delay: 0.2
+    });
+  }, { scope: panelRef });
+
+  const handleClose = contextSafe(() => {
+    // Exit animations
+    gsap.to('.panel-backdrop', { opacity: 0, duration: 0.3 });
+    gsap.to(panelRef.current, {
+      x: '100%',
+      duration: 0.4,
+      ease: 'power3.in',
+      onComplete: onClose
+    });
+  });
 
   const isAnxiety = table.scaleType === 'anxiety';
   const scaleNote = isAnxiety
@@ -41,10 +80,10 @@ export default function RawDataPanel({ table, onClose }) {
   return (
     <>
       {/* Backdrop */}
-      <div className="panel-backdrop" onClick={onClose} />
+      <div className="panel-backdrop" onClick={handleClose} />
 
       {/* Slide-in panel */}
-      <aside className="raw-panel">
+      <aside className="raw-panel" ref={panelRef}>
         {/* Panel header */}
         <div className="raw-panel-header">
           <div>
@@ -53,7 +92,7 @@ export default function RawDataPanel({ table, onClose }) {
               {isAnxiety ? 'Anxiety Dimension' : 'Predictor Variable'} · Raw Indicator Data
             </div>
           </div>
-          <button className="modal-close" onClick={onClose} aria-label="Close panel">✕</button>
+          <button className="modal-close" onClick={handleClose} aria-label="Close panel">✕</button>
         </div>
 
         {/* Overall WM summary */}

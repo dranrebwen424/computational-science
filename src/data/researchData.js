@@ -164,8 +164,8 @@ export const correlationMatrix = {
 export const predictorRanking = [
   { rank: 1, label: 'Self-Confidence',     wm: 2.52, interpretation: 'Agree',    isTop: true,  tableKey: 4 },
   { rank: 2, label: 'Peer Influence',      wm: 2.50, interpretation: 'Agree',    isTop: false, tableKey: 6 },
-  { rank: 3, label: 'Classroom Environ.',  wm: 2.49, interpretation: 'Disagree', isTop: false, tableKey: 7 },
-  { rank: 4, label: 'Lang. Proficiency',   wm: 2.44, interpretation: 'Disagree', isTop: false, tableKey: 5 },
+  { rank: 3, label: 'Classroom Environment',  wm: 2.49, interpretation: 'Disagree', isTop: false, tableKey: 7 },
+  { rank: 4, label: 'Language Proficiency',   wm: 2.44, interpretation: 'Disagree', isTop: false, tableKey: 5 },
 ];
 
 // Correlation rows also link to their indicator tables

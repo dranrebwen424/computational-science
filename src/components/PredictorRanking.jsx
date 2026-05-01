@@ -6,6 +6,22 @@ import {
 
 const chartData = [...predictorRanking].sort((a, b) => a.wm - b.wm); // ascending for horizontal
 
+const CustomYAxisTick = ({ x, y, payload }) => {
+  return (
+    <foreignObject x={x - 140} y={y - 18} width={130} height={36}>
+      <div xmlns="http://www.w3.org/1999/xhtml" style={{ 
+        width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+        textAlign: 'right', fontSize: '11px', color: 'var(--text-secondary)', 
+        fontFamily: 'var(--font-body)', lineHeight: 1.3, wordWrap: 'break-word', paddingRight: '4px'
+      }}>
+        {payload.value}
+      </div>
+    </foreignObject>
+  );
+};
+
+
+
 function CustomTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
@@ -34,22 +50,20 @@ export default function PredictorRanking({ showRefLines, onBarClick }) {
     <div className="card" style={{ flex: 1 }}>
       <div className="card-header">
         <div>
-          <div className="card-title">Major Predictors of Language Anxiety (Ranked)</div>
-          <div className="card-subtitle">By overall weighted mean · n = 237</div>
-          <div className="chart-clickable-hint">🖱 Click any bar to view raw indicator data</div>
+          <div className="card-title">What Situation Causes the Most Anxiety?</div>
         </div>
       </div>
-      <div className="chart-wrap" style={{ height: 185 }}>
+      <div className="chart-wrap" style={{ minHeight: 340 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 50, left: 10, bottom: 0 }}
-            onClick={handleClick} style={{ cursor: 'pointer' }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#2a2d3e" horizontal={false} />
-            <XAxis type="number" domain={[2.0, 3.0]} tickCount={5} tick={{ fill: '#9da3b4', fontSize: 10 }} tickFormatter={v => v.toFixed(2)} />
-            <YAxis type="category" dataKey="label" width={110} tick={{ fill: '#9da3b4', fontSize: 10 }} />
-            <Tooltip content={<CustomTooltip />} />
-            {showRefLines && <ReferenceLine x={2.50} stroke="#6366f1" strokeDasharray="4 2" label={{ value: 'Agree ↑', position: 'top', fill: '#8b5cf6', fontSize: 9 }} />}
-            <Bar dataKey="wm" radius={[0, 4, 4, 0]} maxBarSize={22}
-              label={{ position: 'right', fill: '#9da3b4', fontSize: 10, formatter: v => v.toFixed(2) }}>
+            onClick={handleClick} style={{ cursor: 'pointer' }} barCategoryGap="15%">
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+            <XAxis type="number" domain={[2.0, 3.0]} tickCount={5} tick={{ fill: 'var(--text-muted)', fontSize: 10 }} tickFormatter={v => v.toFixed(2)} />
+            <YAxis type="category" dataKey="label" width={140} tick={<CustomYAxisTick />} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--surface-2)' }} />
+            {showRefLines && <ReferenceLine x={2.50} stroke="var(--accent)" strokeDasharray="4 2" label={{ value: 'Agree ↑', position: 'top', fill: 'var(--accent)', fontSize: 9 }} />}
+            <Bar dataKey="wm" radius={[0, 8, 8, 0]} maxBarSize={32}
+              label={{ position: 'right', fill: 'var(--text-primary)', fontSize: 11, fontWeight: 600, formatter: v => v.toFixed(2) }}>
               {chartData.map((entry, i) => (
                 <Cell key={i} fill={entry.isTop ? 'var(--teal)' : entry.interpretation === 'Agree' ? 'var(--agree)' : 'var(--disagree)'} fillOpacity={0.9} />
               ))}
