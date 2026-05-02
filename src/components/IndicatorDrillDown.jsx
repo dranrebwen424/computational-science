@@ -68,8 +68,9 @@ export default function IndicatorDrillDown({ showRefLines, onBarClick }) {
                 <Cell key={i} fill={getBarColor(entry.interpretation)} fillOpacity={0.85} />
               ))}
             </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
       <div style={{ fontSize: '10px', color: 'var(--text-muted)', paddingTop: '2px' }}>
         {table.indicators.map((ind, i) => (
