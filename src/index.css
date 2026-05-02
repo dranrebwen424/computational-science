@@ -1,33 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 /* ── CSS Custom Properties ─────────────────────────────────── */
 :root {
-  --bg:          #F5F7FA;
+  --bg:          #F4F6F9;
   --surface:     #FFFFFF;
-  --surface-2:   #F9FAFB;
-  --border:      #E5E7EB;
-  --border-2:    #D1D5DB;
+  --surface-2:   #F8F9FB;
+  --border:      #EAECF0;
+  --border-2:    #D0D5DD;
 
-  --text-primary:   #1F2937;
-  --text-secondary: #6B7280;
-  --text-muted:     #9CA3AF;
+  --text-primary:   #101828;
+  --text-secondary: #667085;
+  --text-muted:     #98A2B3;
 
-  --accent:       #3B82F6;
-  --accent-dim:   #EFF6FF;
-  
-  --high:         #EF4444;
-  --high-dim:     #FEF2F2;
-  --moderate:     #F59E0B;
-  --moderate-dim: #FFFBEB;
-  --low:          #10B981;
-  --low-dim:      #ECFDF5;
-  --agree:        #3B82F6;
-  --agree-dim:    #EFF6FF;
-  --disagree:     #6B7280;
-  --disagree-dim: #F3F4F6;
+  --accent:       #6366F1;
+  --accent-dim:   #EEF2FF;
 
-  --radius:   24px;
+  /* Softer, more harmonious data colors */
+  --high:         #F04438;
+  --high-dim:     #FEF3F2;
+  --moderate:     #F79009;
+  --moderate-dim: #FFFAEB;
+  --low:          #12B76A;
+  --low-dim:      #ECFDF3;
+  --agree:        #6366F1;
+  --agree-dim:    #EEF2FF;
+  --disagree:     #667085;
+  --disagree-dim: #F2F4F7;
+  --teal:         #0E9384;
+  --teal-dim:     #F0FDF9;
+
+  --radius:   28px;
   --gap:      24px;
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
@@ -62,15 +67,15 @@ html, body, #root {
 
 /* ── Header ─────────────────────────────────────────────────── */
 .header-standalone {
-  padding: 16px 0 32px 0;
+  padding: 20px 0 36px 0;
   flex-shrink: 0;
 }
 .header-title {
   font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 30px;
+  font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   margin: 0;
 }
 
@@ -130,36 +135,58 @@ html, body, #root {
 }
 .toggle.on::after { transform: translateX(16px); }
 
+/* ── Premium Dropdown Select ─────────────────────────────────── */
+.premium-select {
+  appearance: none;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 36px 8px 16px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23667085%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+}
+.premium-select:hover {
+  border-color: var(--border-2);
+  background-color: var(--surface);
+  box-shadow: 0 2px 4px rgba(16,24,40,0.06);
+}
+.premium-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
 /* ── KPI Cards ───────────────────────────────────────────────── */
 .kpi-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--gap);
   margin-bottom: var(--gap);
 }
 .kpi-card {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 20px 24px;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.03);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(16,24,40,0.06), 0 1px 2px rgba(16,24,40,0.04);
+  transition: box-shadow 0.3s ease;
 }
-.kpi-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 3px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.kpi-card:hover::before {
-  transform: scaleX(1);
+.kpi-card:hover {
+  box-shadow: 0 8px 24px rgba(16,24,40,0.08);
 }
 .kpi-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.02em; }
 .kpi-value { 
@@ -185,10 +212,10 @@ html, body, #root {
 }
 .badge-high     { background: var(--high-dim);     color: var(--high); }
 .badge-moderate { background: var(--moderate-dim); color: var(--moderate); }
-.badge-low      { background: #E1F0E5;              color: #2F7A48; }
+.badge-low      { background: var(--low-dim);      color: var(--low); }
 .badge-agree    { background: var(--agree-dim);    color: var(--agree); }
 .badge-disagree { background: var(--disagree-dim); color: var(--disagree); }
-.badge-veryhigh { background: #FCE8E8;             color: #D32F2F; }
+.badge-veryhigh { background: var(--high-dim);     color: var(--high); }
 
 .kpi-bar-track {
   height: 4px; background: var(--surface-2);
@@ -216,13 +243,17 @@ html, body, #root {
 .card {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   min-height: 0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0,0,0,0.03);
+  box-shadow: 0 1px 3px rgba(16,24,40,0.06), 0 1px 2px rgba(16,24,40,0.04);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 8px 24px rgba(16,24,40,0.08);
 }
 .card-header {
   display: flex; align-items: center;
@@ -236,7 +267,10 @@ html, body, #root {
   color: var(--text-primary); 
 }
 .card-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 400; }
-.chart-wrap { flex: 1; min-height: 220px; margin-top: 8px; width: 100%; }
+.chart-wrap { 
+  flex: 1; min-height: 220px; margin-top: 8px; width: 100%; 
+  overflow-x: auto; overflow-y: hidden;
+}
 
 /* ── Tab Switcher ────────────────────────────────────────────── */
 .tab-row {
@@ -444,7 +478,44 @@ html, body, #root {
   padding: 20px 32px;
   border-top: 1px solid var(--border);
   flex-shrink: 0;
-  background: var(--surface-2);
+  background: var(--surface);
+}
+
+/* ── Responsive Adjustments ────────────────────────────────────── */
+@media (max-width: 992px) {
+  .bento-row {
+    flex-direction: column;
+  }
+  .bento-row > :nth-child(1),
+  .bento-row > :nth-child(2) {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 24px 16px;
+  }
+  .header-standalone {
+    padding: 12px 0 24px 0;
+  }
+  .header-title {
+    font-size: 24px;
+  }
+  .card {
+    padding: 20px;
+  }
+  .kpi-card {
+    padding: 20px;
+  }
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .raw-panel {
+    width: 100%;
+  }
 }
 
 /* Clickable chart hint */

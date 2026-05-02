@@ -22,19 +22,44 @@ function rToColor(r) {
 function CustomTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
+  const isPos = d.rValue >= 0;
   return (
-    <div className="custom-tooltip">
-      <div className="hm-tooltip-pair">{d.y} × {d.x}</div>
-      <div className="hm-tooltip-r">r = {d.rValue >= 0 ? '+' : ''}{d.rValue.toFixed(3)}</div>
-      <div className="hm-tooltip-p">p = {d.p.toFixed(3)}</div>
-      <div style={{ marginTop: 6, fontSize: 10, color: 'var(--teal)' }}>🖱 Click to view raw indicator data</div>
+    <div style={{
+      background: 'rgba(255, 255, 255, 0.92)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid rgba(0,0,0,0.08)',
+      borderRadius: 14,
+      padding: '12px 18px',
+      boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
+      fontFamily: 'var(--font-body)',
+      minWidth: 160,
+    }}>
+      <div style={{ fontSize: 12, color: 'rgba(0,0,0,0.45)', marginBottom: 7, lineHeight: 1.4 }}>
+        {d.y} × {d.x}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+        <span style={{ fontSize: 26, fontWeight: 700, color: '#111', letterSpacing: '-0.03em' }}>
+          {d.rValue >= 0 ? '+' : ''}{d.rValue.toFixed(3)}
+        </span>
+        <span style={{
+          fontSize: 10, fontWeight: 700,
+          background: isPos ? 'rgba(239,68,68,0.12)' : 'rgba(42,106,100,0.12)',
+          color: isPos ? '#dc2626' : '#0f766e',
+          padding: '3px 9px', borderRadius: 99,
+          textTransform: 'uppercase', letterSpacing: '0.05em'
+        }}>
+          {isPos ? 'Positive' : 'Negative'}
+        </span>
+      </div>
+      <div style={{ fontSize: 10, color: 'rgba(0,0,0,0.35)', marginTop: 4 }}>p = {d.p.toFixed(3)}</div>
     </div>
   );
 }
 
 const CustomYAxisTick = ({ x, y, payload }) => {
   return (
-    <foreignObject x={x - 140} y={y - 18} width={130} height={36}>
+    <foreignObject x={x - 115} y={y - 18} width={110} height={36}>
       <div xmlns="http://www.w3.org/1999/xhtml" style={{ 
         width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
         textAlign: 'right', fontSize: '11px', color: 'var(--text-secondary)', 
@@ -90,18 +115,22 @@ export default function CorrelationHeatmap({ onCellClick }) {
 
   return (
     <div className="card" style={{ flex: 1 }}>
-      <div className="card-header" style={{ flexWrap: 'wrap', gap: 10 }}>
+      <div className="card-header" style={{ flexWrap: 'wrap', gap: 10, alignItems: 'flex-start' }}>
         <div>
           <div className="card-title">How are factors related to Anxiety?</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: '11.5px', fontWeight: 500, color: 'var(--text-secondary)', marginTop: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 10, height: 10, borderRadius: '3px', background: 'var(--high)' }} /> Positive Correlation
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 10, height: 10, borderRadius: '3px', background: 'var(--teal)' }} /> Negative Correlation
+            </div>
+          </div>
         </div>
         <select 
+          className="premium-select"
           value={selectedFilter} 
           onChange={(e) => setSelectedFilter(e.target.value)}
-          style={{
-            padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)',
-            background: 'var(--surface-2)', color: 'var(--text-primary)', fontSize: '12px',
-            fontFamily: 'var(--font-body)', outline: 'none', cursor: 'pointer'
-          }}
         >
           <option value="all">All Anxiety Types</option>
           {rows.map(r => (
@@ -110,11 +139,12 @@ export default function CorrelationHeatmap({ onCellClick }) {
         </select>
       </div>
       <div className="chart-wrap" style={{ height: selectedFilter === 'all' ? 340 : 180, marginTop: 10 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <ScatterChart margin={{ top: 20, right: 30, bottom: 50, left: 10 }}>
+        <div style={{ minWidth: 600, height: '100%' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart margin={{ top: 20, right: 30, bottom: 50, left: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis type="category" dataKey="x" tick={<CustomXAxisTick />} interval={0} allowDuplicatedCategory={false} />
-            <YAxis type="category" dataKey="y" tick={<CustomYAxisTick />} width={140} allowDuplicatedCategory={false} />
+            <YAxis type="category" dataKey="y" tick={<CustomYAxisTick />} width={115} allowDuplicatedCategory={false} />
             <ZAxis type="number" dataKey="z" range={[60, 400]} />
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
             <Scatter data={scatterData} onClick={handleClick} style={{ cursor: 'pointer' }}>
@@ -124,7 +154,8 @@ export default function CorrelationHeatmap({ onCellClick }) {
               <LabelList dataKey="rDisplay" position="top" style={{ fill: 'var(--text-primary)', fontSize: 10, fontWeight: 600 }} offset={8} />
             </Scatter>
           </ScatterChart>
-        </ResponsiveContainer>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

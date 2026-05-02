@@ -4,27 +4,14 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, Cell
 } from 'recharts';
+import { GlassTooltip } from './GlassTooltip.jsx';
 
 function getBarColor(interp) {
   const map = { High: 'var(--high)', Moderate: 'var(--moderate)', Agree: 'var(--agree)', Disagree: 'var(--disagree)', 'Very High': 'var(--high)' };
   return map[interp] || 'var(--accent)';
 }
 
-function CustomTooltip({ active, payload }) {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
-  const cls = { High: 'badge-high', Moderate: 'badge-moderate', Agree: 'badge-agree', Disagree: 'badge-disagree' };
-  return (
-    <div className="custom-tooltip">
-      <div className="ct-label" style={{ whiteSpace: 'normal', lineHeight: 1.4 }}>{d.fullText}</div>
-      <div className="ct-value">{d.wm.toFixed(2)}</div>
-      <div className={`ct-interp ${cls[d.interpretation] || ''}`} style={{ display: 'inline-block', padding: '2px 7px', borderRadius: 4, marginTop: 4 }}>
-        {d.interpretation}
-      </div>
-      <div style={{ marginTop: 5, fontSize: 10, color: 'var(--teal)' }}>🖱 Click bar to view full table data</div>
-    </div>
-  );
-}
+
 
 export default function IndicatorDrillDown({ showRefLines, onBarClick }) {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -48,13 +35,9 @@ export default function IndicatorDrillDown({ showRefLines, onBarClick }) {
           <div className="card-title">Top Anxiety Triggers</div>
         </div>
         <select 
+          className="premium-select"
           value={activeIdx} 
           onChange={(e) => setActiveIdx(Number(e.target.value))}
-          style={{
-            padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)',
-            background: 'var(--surface-2)', color: 'var(--text-primary)', fontSize: '12px',
-            fontFamily: 'var(--font-body)', outline: 'none', cursor: 'pointer'
-          }}
         >
           {allTables.map((t, i) => (
             <option key={i} value={i}>{t.fullTitle || t.title}</option>
@@ -62,13 +45,14 @@ export default function IndicatorDrillDown({ showRefLines, onBarClick }) {
         </select>
       </div>
       <div className="chart-wrap" style={{ height: 200 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
-            onClick={handleClick} style={{ cursor: 'pointer' }}>
+        <div style={{ minWidth: 500, height: '100%' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
+              onClick={handleClick} style={{ cursor: 'pointer' }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
             <XAxis dataKey="name" tick={{ fill: 'var(--text-secondary)', fontSize: 10, fontFamily: 'var(--font-body)' }} />
             <YAxis domain={[0, 4]} tickCount={9} tick={{ fill: 'var(--text-muted)', fontSize: 10 }} tickFormatter={v => v.toFixed(2)} />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--surface-2)' }} />
+            <Tooltip content={(props) => <GlassTooltip {...props} direction="bottom" labelKey="fullText" />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
             {showRefLines && isAnxiety && <>
               <ReferenceLine y={1.75} stroke="var(--text-muted)" strokeDasharray="4 2" />
               <ReferenceLine y={2.50} stroke="var(--accent)" strokeDasharray="4 2" />

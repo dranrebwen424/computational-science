@@ -14,35 +14,42 @@ export default function App() {
   const [panelTable, setPanelTable] = useState(null);
 
   const { contextSafe } = useGSAP(() => {
-    // Premium staggered reveal sequence
-    const tl = gsap.timeline();
-    
-    tl.from('.header-standalone', { y: -20, opacity: 0, duration: 1, ease: 'power3.out' })
-      .from('.kpi-card', { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'back.out(1.2)' }, '-=0.6')
-      .from('.bento-row > .card', { y: 30, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out' }, '-=0.4')
-      .from('.footer', { opacity: 0, duration: 1 }, '-=0.4');
+    // Premium staggered reveal — spring physics
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    // Interactive Hover Effects via GSAP
+    tl.from('.header-standalone', { y: -24, opacity: 0, duration: 0.9 })
+      .from('.kpi-card', {
+        y: 32, opacity: 0, scale: 0.97,
+        duration: 0.7, stagger: 0.1,
+        ease: 'back.out(1.4)'
+      }, '-=0.5')
+      .from('.bento-row > .card', {
+        y: 36, opacity: 0,
+        duration: 0.75, stagger: 0.12,
+        ease: 'power4.out'
+      }, '-=0.35')
+      .from('.footer', { opacity: 0, y: 10, duration: 0.8 }, '-=0.3');
+
+    // Subtle card hover lift
     const cards = gsap.utils.toArray('.card, .kpi-card');
     cards.forEach(card => {
       card.addEventListener('mouseenter', contextSafe(() => {
-        gsap.to(card, { 
-          y: -6, 
-          boxShadow: '0 16px 40px rgba(0,0,0,0.06)', 
-          duration: 0.4, 
-          ease: 'power2.out' 
+        gsap.to(card, {
+          y: -5,
+          boxShadow: '0 12px 32px rgba(16,24,40,0.10)',
+          duration: 0.35,
+          ease: 'power2.out'
         });
       }));
       card.addEventListener('mouseleave', contextSafe(() => {
-        gsap.to(card, { 
-          y: 0, 
-          boxShadow: '0 4px 20px rgba(0,0,0,0.01)', 
-          duration: 0.6, 
-          ease: 'power3.out' 
+        gsap.to(card, {
+          y: 0,
+          boxShadow: '0 1px 3px rgba(16,24,40,0.06)',
+          duration: 0.5,
+          ease: 'power3.out'
         });
       }));
     });
-      
   }, { scope: container });
 
   // For heatmap click, we show the row (anxiety dim) table
